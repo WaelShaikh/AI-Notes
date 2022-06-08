@@ -24,7 +24,7 @@
 				class="TextArea"
 				id="textarea"
 				placeholder="Start typing here..."
-				oninput="handleTextAreaChange()"
+				oninput="handleTextAreaChange(this)"
 			></textarea>
 
 			<img id="TextImage" class="TextImage"/>
@@ -70,13 +70,18 @@
 			</div>
 -->
 
+			</div>
 		</div>
-	</div>
 
 	<script>
 
+		if(localStorage.text) {
+			document.getElementById("textarea").value = localStorage.text;
+		}
+
 		function handleTextAreaChange(e) {
 			this.scrollTop = this.scrollHeight;
+			localStorage.text = e.value;
 		}
 
 		function handleImageChange(e) {
@@ -123,11 +128,18 @@
 			answers = await model.findAnswers(question, passage);
 			if (answers.length > 0) {
 				console.log(answers);
-				alert(answers[0].text);
+				document.getElementById("textarea").value += "\n\n\nAnswer: " + answers[0].text.trim() + "\n\n";
+				//alert(answers[0].text);
+				var msg = new SpeechSynthesisUtterance();
+				msg.text = answers[0].text;
+				window.speechSynthesis.speak(msg);
 			}
 			else {
 				console.log(answers);
-				alert("No Answer Found");
+				//alert("No Answer Found");
+				var msg = new SpeechSynthesisUtterance();
+				msg.text = "No Answer Found";
+				window.speechSynthesis.speak(msg);
 			}
 		};
 
